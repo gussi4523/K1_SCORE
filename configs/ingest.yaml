@@ -1,0 +1,9 @@
+# Overrides for tool 01 (ingest). Anything omitted falls back to defaults in src/k1score/core/config.py.
+download:
+  max_height: 1080
+  cookies_from_browser: null   # e.g. firefox, if YouTube asks to sign in
+
+pose:
+  model: yolo11s-pose.pt       # GTX 1650 (4 GB): n/s are fast; try yolo11m-pose.pt for accuracy
+  imgsz: 960
+  frame_stride: 1              # 1 = every frame
