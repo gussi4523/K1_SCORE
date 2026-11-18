@@ -59,6 +59,45 @@ DEFAULT_INGEST: dict = {
 }
 
 
+# Stage 2 (strikes), v0.0.1: rule-based. Distances are in "torso lengths" (shoulder-centre to hip-centre of the
+# fighter concerned), so they do not depend on zoom. Starting values - to be tuned against hand-checked strikes.
+DEFAULT_STRIKES: dict = {
+    "min_joint_conf": 0.3,       # joints below this are treated as missing
+    "max_gap": 5,                # frames; shorter gaps are filled by interpolation
+    "smooth": 3,                 # frames, moving average
+    "rest_window_s": 2.0,        # a limb's "rest" pose = rolling median of its position relative to its root
+    "scale_window_s": 2.0,
+    "max_reach": 5.0,            # attacker-defender centre distance (torso lengths) beyond which nothing counts
+    "merge_s": 0.2,              # same attacker, two detections closer than this = one strike (keep the stronger)
+    "hand": {"min_dev": 0.55, "min_prominence": 0.4, "min_speed": 3.0, "min_forward": 0.25,
+             "min_gap_s": 0.15, "start_frac": 0.3, "rise_max_s": 0.5, "fall_max_s": 0.6},
+    "leg": {"min_dev": 1.2, "min_prominence": 0.8, "min_speed": 4.0, "min_forward": 0.3,
+            "min_gap_s": 0.3, "start_frac": 0.3, "rise_max_s": 0.7, "fall_max_s": 0.9,
+            "knee_gain": 2.0,            # knee lift counts this many times as much as ankle travel
+            "knee_shin_horizontal": 0.6},  # shin more horizontal than this at the peak = kick, else knee
+    "outcome": {
+        "hit_dist": 0.5,         # tip closer than this to the target = touching it
+        "guard_dist": 0.35,      # tip closer than this to the defender's arm / raised shin = touching the guard
+        "guard_margin": 0.1,     # guard must be at most this much farther than the target to count as in front
+        "softness": 0.12,        # width of the sigmoid that turns distances into probabilities
+        "raised_leg_deg": 35.0,  # thigh this far from vertical = leg raised (check) = shin acts as a guard
+        "window": 2,             # frames around the peak searched for the closest approach
+    },
+}
+
+# Stage 3 (scoring). Weights are PLACEHOLDERS, not official K-1 values.
+DEFAULT_SCORING: dict = {
+    "round_seconds": None,       # None = whole video is one round; else split video time into chunks of this length
+    "round_boundaries": None,    # or an explicit list of [start_s, end_s] pairs (overrides round_seconds)
+    "points_per_hit": {"punch": 1.0, "kick_low": 1.0, "kick_mid": 2.0, "kick_high": 2.0, "knee": 2.0},
+    "points_per_blocked": 0.0,
+    "min_confidence": 0.0,       # strikes below this are ignored
+    "min_pose_quality": 0.5,     # strikes whose window has fewer valid skeleton frames are ignored
+    "margin_for_10_8": 15.0,     # point difference that turns a 10-9 round into 10-8 (guess)
+    "allow_even_round": True,
+}
+
+
 def _deep_merge(base: dict, over: dict) -> dict:
     out = copy.deepcopy(base)
     for k, v in over.items():
@@ -84,3 +123,11 @@ def config_hash(cfg: dict) -> str:
 def ns(d: dict) -> SimpleNamespace:
     """dict -> attribute access (cfg.pose.model)."""
     return SimpleNamespace(**{k: ns(v) if isinstance(v, dict) else v for k, v in d.items()})
+
+
+def load_config(defaults: dict, path: Path | str | None = None) -> dict:
+    cfg = copy.deepcopy(defaults)
+    if path and Path(path).exists():
+        with open(path) as f:
+            cfg = _deep_merge(cfg, yaml.safe_load(f) or {})
+    return cfg

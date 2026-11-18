@@ -26,6 +26,8 @@ class Paths:
         self.data = self.root / "data"
         self.manifest = self.data / "manifest.parquet"
         self.labels = self.data / "labels"
+        self.events_dir = self.data / "events"
+        self.scores_dir = self.data / "scores"
 
     # --- per-video directories -------------------------------------------------
     def raw(self, video_id: str) -> Path:
@@ -81,6 +83,21 @@ class Paths:
 
     def meta_json(self, video_id: str) -> Path:
         return self.processed(video_id) / "meta.json"
+
+    def events(self, video_id: str) -> Path:
+        return self.events_dir / video_id
+
+    def strikes_parquet(self, video_id: str) -> Path:
+        return self.events(video_id) / "strikes.parquet"
+
+    def frames_parquet(self, video_id: str) -> Path:
+        return self.events(video_id) / "frames.parquet"
+
+    def scores(self, video_id: str) -> Path:
+        return self.scores_dir / video_id
+
+    def scores_json(self, video_id: str) -> Path:
+        return self.scores(video_id) / "scores.json"
 
     def processed_ids(self) -> list[str]:
         base = self.data / "processed"

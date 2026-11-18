@@ -80,3 +80,18 @@ def validate_poses(arrays: dict[str, np.ndarray], meta: dict) -> list[str]:
     if not np.array_equal(arrays["frame_idx"], np.arange(n)):
         errors.append("frame_idx must equal arange(n_frames) in schema 1.x")
     return errors
+
+
+# --- stage 2 / 3 contract (strike table) -------------------------------------------------------
+MODEL_VERSION = "v0.0.1"   # rule-based baseline; every strike row carries the version that produced it
+
+STRIKE_TYPES = ["punch", "kick_low", "kick_mid", "kick_high", "knee"]
+OUTCOMES = ["hit", "blocked", "miss", "unknown"]   # unknown = attacker or defender skeleton missing at the strike
+LIMBS = {"left_hand": 9, "right_hand": 10, "left_leg": 15, "right_leg": 16, "left_knee": 13, "right_knee": 14}
+
+STRIKE_COLUMNS = [
+    "strike_id", "video_id", "shot_id", "start_frame", "peak_frame", "end_frame",
+    "t_start", "t_peak", "t_end", "attacker", "limb", "strike_type", "target",
+    "outcome", "p_hit", "p_blocked", "p_miss", "confidence", "d_target", "d_guard",
+    "pose_quality", "label_source", "model_version",
+]
