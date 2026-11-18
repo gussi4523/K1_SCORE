@@ -98,3 +98,51 @@ Full report + code: https://github.com/gussi4523/K1_SCORE/blob/main/report/REPOR
 - Post on a weekday morning in your audience's time zone.
 - Use one image: a simple 3-box diagram (video -> skeletons -> strikes -> score) or a skeleton-only picture. Avoid broadcast screenshots (copyright).
 - Do not edit the post heavily after publishing.
+
+
+---
+---
+
+# Day 3 post (viral-style, honest)
+
+## Hook options
+1. My AI judge just scored its first fight. It is bad. I'm shipping it anyway. 🥊
+2. I built a kickboxing judge in one day with zero training data. Here is what it got wrong.
+3. 224 strikes in 10 minutes, and I can't tell you how many are right.
+
+## Post
+
+My AI judge just scored its first fight. It is bad. I'm shipping it anyway. 🥊
+
+Day 3 of building an AI that scores kickboxing. No neural network yet, and that is on purpose.
+
+I wanted a baseline first: the simplest thing that works end to end, so every better model has something to beat.
+
+How it works (no training, just geometry):
+🔹 Find strikes: a hand, foot or knee that leaves its normal position fast, toward the opponent
+🔹 Hit, blocked or miss? Is the striking limb touching the opponent's head or body, or stopped by his arms or a raised shin?
+🔹 Score: hits → points → 10-point must system → decision
+
+First run on a 10-minute fight: 224 strikes found, 43 hits, 96 blocked, 82 misses. A full run takes under a second.
+
+Here is the honest part. 😬
+❌ I have no idea how many of those are correct. Nobody has checked a single strike yet.
+❌ 43% "blocked" looks far too high. My guess: guard arms are always near the face, so my rule fires too easily.
+❌ A 2D skeleton has no depth, and the glove isn't even in it.
+
+But the pipeline exists, 34 tests pass, and every strike is stored with who, when, type, outcome and a confidence score.
+
+Next: I hand-check 50 strikes, measure where the rules fail, then train a PyTorch model that has to beat this one.
+
+Question for the CV people: would you add a second signal (image crops, audio of the impact), or squeeze more out of the skeleton first? 👇
+
+📄 Day 3 report: https://github.com/gussi4523/K1_SCORE/blob/main/daily_reports/2026-11-18.md
+📚 All days: https://github.com/gussi4523/K1_SCORE/tree/main/daily_reports
+
+#ComputerVision #MachineLearning #SportsAnalytics #PoseEstimation #BuildInPublic
+
+## Tips
+- Links only work after `git push`; open one in a private window before posting.
+- For reach, put the links in the first comment and end the post with "Day 3 report in the first comment 👇".
+- Picture: a skeleton-only frame with a "HIT / BLOCKED / MISS" label (no broadcast screenshot, copyright) - can be generated.
+- Reply to comments in the first hour; the closing question is meant to start the discussion.

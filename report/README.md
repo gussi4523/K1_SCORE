@@ -13,6 +13,7 @@ This folder documents everything done so far, stage by stage (state on 2026-11-1
 | 4 | [Full Muay Thai video](stage_4_muaythai_full_video.md) | 10-minute test, human-readable previews, viewers | done |
 | 5 | [Identities v0.2](stage_5_identities.md) | Fighters and referee told apart, stable for the whole video | done |
 | 6 | [Current state and next steps](stage_6_state_and_next.md) | Numbers, limits, what comes next | - |
+| 7 | [Model v0.0.1](stage_7_model_v001.md) | Rule-based strikes, outcome and scoring baseline (2026-11-18) | done |
 
 **Start with [REPORT.md](REPORT.md)**: the whole project as one continuous text report. The stage files in the table above give the same story in more detail, one per stage.
 
